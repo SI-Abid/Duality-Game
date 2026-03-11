@@ -1,0 +1,110 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/waiting_room.gd" id="1_wr"]
+
+[node name="WaitingRoom" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_wr")
+
+[node name="BG" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.07, 0.12, 1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -220.0
+offset_right = 260.0
+offset_bottom = 220.0
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="VBox"]
+custom_minimum_size = Vector2(520, 50)
+text = "WAITING ROOM"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="RoomCodeLabel" type="Label" parent="VBox"]
+custom_minimum_size = Vector2(520, 30)
+text = "Room: ------"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+modulate = Color(1.0, 0.9, 0.3, 1)
+
+[node name="Separator" type="HSeparator" parent="VBox"]
+modulate = Color(1, 1, 1, 0.2)
+
+[node name="PlayersBox" type="HBoxContainer" parent="VBox"]
+custom_minimum_size = Vector2(520, 140)
+alignment = 1
+theme_override_constants/separation = 40
+
+[node name="Player1" type="VBoxContainer" parent="VBox/PlayersBox"]
+custom_minimum_size = Vector2(200, 120)
+theme_override_constants/separation = 8
+
+[node name="SlotLabel" type="Label" parent="VBox/PlayersBox/Player1"]
+text = "Player 1 (Host)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+modulate = Color(0.6, 0.8, 1.0, 1)
+
+[node name="NameLabel" type="Label" parent="VBox/PlayersBox/Player1"]
+text = "..."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="CharLabel" type="Label" parent="VBox/PlayersBox/Player1"]
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.7, 0.7, 0.9, 1)
+
+[node name="VSLabel" type="Label" parent="VBox/PlayersBox"]
+text = "VS"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 24
+modulate = Color(1.0, 0.5, 0.5, 1)
+
+[node name="Player2" type="VBoxContainer" parent="VBox/PlayersBox"]
+custom_minimum_size = Vector2(200, 120)
+theme_override_constants/separation = 8
+
+[node name="SlotLabel" type="Label" parent="VBox/PlayersBox/Player2"]
+text = "Player 2"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+modulate = Color(1.0, 0.8, 0.6, 1)
+
+[node name="NameLabel" type="Label" parent="VBox/PlayersBox/Player2"]
+text = "Waiting..."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="CharLabel" type="Label" parent="VBox/PlayersBox/Player2"]
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.7, 0.7, 0.9, 1)
+
+[node name="Separator2" type="HSeparator" parent="VBox"]
+modulate = Color(1, 1, 1, 0.2)
+
+[node name="StatusLabel" type="Label" parent="VBox"]
+custom_minimum_size = Vector2(520, 32)
+text = "Waiting..."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+modulate = Color(0.7, 0.9, 0.7, 1)
+
+[node name="StartButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(520, 60)
+text = "> START GAME"
+theme_override_font_sizes/font_size = 24
+disabled = true
+visible = false

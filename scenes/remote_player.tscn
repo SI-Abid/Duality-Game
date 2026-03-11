@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/remote_player.gd" id="1_rp"]
+
+[node name="RemotePlayer" type="Node2D"]
+script = ExtResource("1_rp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+
+[node name="NameLabel" type="Label" parent="."]
+position = Vector2(-40, -28)
+custom_minimum_size = Vector2(80, 18)
+text = "Player"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+modulate = Color(1, 0.8, 0.4, 1)
