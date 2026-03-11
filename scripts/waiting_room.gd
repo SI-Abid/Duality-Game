@@ -42,19 +42,26 @@ func _on_room_updated(data: Dictionary) -> void:
 	var host_ip: String = data.get("host_ip", "")
 
 	# 1. Populate player cards
-	var player_list := players.values()
-	if player_list.size() >= 1:
-		var p1 = player_list[0]
-		player1_name.text = p1.get("name", "???")
-		player1_char.text = p1.get("character", "")
-	if player_list.size() >= 2:
-		var p2 = player_list[1]
-		player2_name.text = p2.get("name", "???")
-		player2_char.text = p2.get("character", "")
-		# Store other player data
-		for pid in players.keys():
-			if pid != GlobalData.player_id:
-				GlobalData.other_player = players[pid]
+	var host_p = null
+	var guest_p = null
+	
+	for pid in players.keys():
+		var p = players[pid]
+		if p.get("is_host", false):
+			host_p = p
+		else:
+			guest_p = p
+			
+		if pid != GlobalData.player_id:
+			GlobalData.other_player = p
+
+	if host_p != null:
+		player1_name.text = host_p.get("name", "???")
+		player1_char.text = host_p.get("character", "")
+		
+	if guest_p != null:
+		player2_name.text = guest_p.get("name", "???")
+		player2_char.text = guest_p.get("character", "")
 		
 		# 2. Start Network initialization if not done
 		if not _network_started:

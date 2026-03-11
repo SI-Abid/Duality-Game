@@ -143,6 +143,7 @@ func _build_player_data() -> Dictionary:
 	return {
 		"name":      GlobalData.player_name,
 		"character": GlobalData.selected_character,
+		"is_host":   GlobalData.is_host,
 		"ready":     false,
 		"pos_x":     0.0,
 		"pos_y":     0.0,
