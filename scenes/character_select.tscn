@@ -1,0 +1,120 @@
+[gd_scene load_steps=2 format=3 uid="uid://w4aolurr612f"]
+
+[ext_resource type="Script" uid="uid://b0lq68thn2gvp" path="res://scripts/character_select.gd" id="1_cs"]
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cs")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.07, 0.12, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -250.0
+offset_right = 200.0
+offset_bottom = 250.0
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "DUALITY"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="VBoxContainer"]
+modulate = Color(0.7, 0.7, 0.9, 1)
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Choose your hero"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="VBoxContainer"]
+modulate = Color(1, 1, 1, 0.15)
+custom_minimum_size = Vector2(400, 10)
+layout_mode = 2
+
+[node name="NameSection" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/NameSection"]
+modulate = Color(0.8, 0.8, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Your Name"
+
+[node name="NameInput" type="LineEdit" parent="VBoxContainer/NameSection"]
+custom_minimum_size = Vector2(400, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+placeholder_text = "Enter your name..."
+max_length = 20
+
+[node name="Separator2" type="HSeparator" parent="VBoxContainer"]
+modulate = Color(1, 1, 1, 0.15)
+custom_minimum_size = Vector2(400, 10)
+layout_mode = 2
+
+[node name="CharSection" type="Label" parent="VBoxContainer"]
+modulate = Color(0.8, 0.8, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Select Character"
+
+[node name="CharacterSection" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="LeftButton" type="Button" parent="VBoxContainer/CharacterSection"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "<"
+
+[node name="PreviewBox" type="Panel" parent="VBoxContainer/CharacterSection"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="CharacterPreview" type="TextureRect" parent="VBoxContainer/CharacterSection/PreviewBox"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightButton" type="Button" parent="VBoxContainer/CharacterSection"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = ">"
+
+[node name="CharacterName" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Ninja Frog"
+horizontal_alignment = 1
+
+[node name="NextButton" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+disabled = true
+text = "NEXT  >"

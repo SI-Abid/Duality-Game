@@ -1,0 +1,171 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/lobby.gd" id="1_lobby"]
+
+[node name="Lobby" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_lobby")
+
+[node name="BG" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.07, 0.12, 1)
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 40.0
+offset_right = 200.0
+offset_bottom = 90.0
+text = "DUALITY"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 36
+
+[node name="Content" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="StatusLabel" type="Label" parent="Content"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -240.0
+offset_top = 540.0
+offset_right = 240.0
+offset_bottom = 570.0
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.7, 0.9, 0.7, 1)
+
+[node name="MenuPanel" type="Control" parent="Content"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -140.0
+offset_right = 180.0
+offset_bottom = 140.0
+
+[node name="VBox" type="VBoxContainer" parent="Content/MenuPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 20
+
+[node name="Heading" type="Label" parent="Content/MenuPanel/VBox"]
+text = "Multiplayer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+modulate = Color(0.8, 0.8, 1.0, 1)
+
+[node name="Sub" type="Label" parent="Content/MenuPanel/VBox"]
+text = "Play with a friend over the internet"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+modulate = Color(0.6, 0.6, 0.8, 1)
+
+[node name="CreateBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 60)
+text = "Create Room"
+theme_override_font_sizes/font_size = 20
+
+[node name="JoinBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 60)
+text = "Join Room"
+theme_override_font_sizes/font_size = 20
+
+[node name="BackBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 44)
+text = "< Back"
+theme_override_font_sizes/font_size = 16
+modulate = Color(0.7, 0.7, 0.7, 1)
+
+[node name="CreatePanel" type="Control" parent="Content"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 200.0
+visible = false
+
+[node name="VBox" type="VBoxContainer" parent="Content/CreatePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 24
+
+[node name="Heading" type="Label" parent="Content/CreatePanel/VBox"]
+text = "Room Created!"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+modulate = Color(0.7, 1.0, 0.7, 1)
+
+[node name="RoomCodeLabel" type="Label" parent="Content/CreatePanel/VBox"]
+custom_minimum_size = Vector2(400, 80)
+text = "Room Code:\nABC123"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 36
+modulate = Color(1.0, 0.9, 0.3, 1)
+
+[node name="WaitingLabel" type="Label" parent="Content/CreatePanel/VBox"]
+text = "Waiting for another player..."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 15
+modulate = Color(0.7, 0.7, 0.9, 1)
+
+[node name="CancelBtn" type="Button" parent="Content/CreatePanel/VBox"]
+custom_minimum_size = Vector2(400, 48)
+text = "Cancel"
+theme_override_font_sizes/font_size = 16
+modulate = Color(0.8, 0.4, 0.4, 1)
+
+[node name="JoinPanel" type="Control" parent="Content"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = 160.0
+visible = false
+
+[node name="VBox" type="VBoxContainer" parent="Content/JoinPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 20
+
+[node name="Heading" type="Label" parent="Content/JoinPanel/VBox"]
+text = "Join a Room"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+modulate = Color(0.8, 0.8, 1.0, 1)
+
+[node name="CodeHint" type="Label" parent="Content/JoinPanel/VBox"]
+text = "Enter the 6-character code:"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+modulate = Color(0.6, 0.6, 0.8, 1)
+
+[node name="CodeInput" type="LineEdit" parent="Content/JoinPanel/VBox"]
+custom_minimum_size = Vector2(400, 56)
+placeholder_text = "e.g.  ABC123"
+max_length = 6
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+
+[node name="JoinConfirmBtn" type="Button" parent="Content/JoinPanel/VBox"]
+custom_minimum_size = Vector2(400, 56)
+text = "JOIN"
+theme_override_font_sizes/font_size = 22
+disabled = true
+
+[node name="CancelBtn" type="Button" parent="Content/JoinPanel/VBox"]
+custom_minimum_size = Vector2(400, 44)
+text = "< Back"
+theme_override_font_sizes/font_size = 16
+modulate = Color(0.7, 0.7, 0.7, 1)
