@@ -1,0 +1,10 @@
+; Duality — local secrets config (NOT committed to version control)
+; Copy this file to config.cfg and fill in your values.
+; config.cfg is in .gitignore so it will never be committed.
+
+[firebase]
+db_url = "https://YOUR-PROJECT-default-rtdb.YOUR-REGION.firebasedatabase.app"
+
+[android]
+; Place your keystore at ~/my-release-key.keystore (outside the project).
+; In Godot Editor → Export → Android → Keystore section, point to that path.

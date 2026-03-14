@@ -6,7 +6,7 @@ extends Node
 signal room_updated(data: Dictionary)
 signal request_failed(code: int, error: String)
 
-const DB_URL = "https://pixel-adventure-v2-default-rtdb.asia-southeast1.firebasedatabase.app"
+var DB_URL: String = ""  # Loaded from config.cfg (not committed to version control)
 
 # ── Queue HTTP (for writes / one-off reads) ───────────────────────────────────
 var _http_queue: HTTPRequest
@@ -22,6 +22,7 @@ var _polling: bool = false
 var _poll_busy: bool = false
 
 func _ready() -> void:
+	_load_config()
 	_http_queue = HTTPRequest.new()
 	_http_queue.timeout = 10.0
 	add_child(_http_queue)
@@ -37,6 +38,16 @@ func _ready() -> void:
 	_poll_timer.one_shot = false
 	_poll_timer.timeout.connect(_do_poll)
 	add_child(_poll_timer)
+
+func _load_config() -> void:
+	var cfg = ConfigFile.new()
+	var err = cfg.load("res://config.cfg")
+	if err != OK:
+		push_error("[Firebase] config.cfg not found! Copy config.cfg.example to config.cfg and fill in your Firebase DB URL.")
+		return
+	DB_URL = cfg.get_value("firebase", "db_url", "")
+	if DB_URL.is_empty():
+		push_error("[Firebase] db_url is empty in config.cfg")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Public API

@@ -1,3 +1,19 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Build artifacts — never commit these
+*.apk
+*.idsig
+*.pck
+*.x86_64
+releases/
+
+# Security — keystores and secrets
+*.keystore
+*.jks
+key.properties
+config.cfg
+
+# Editor local files
+.vscode/
