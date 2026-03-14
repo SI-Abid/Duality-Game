@@ -60,12 +60,13 @@ func generate_room_code() -> String:
 		code += chars[randi() % chars.length()]
 	return code
 
-func create_room(room_code: String, player_data: Dictionary) -> void:
+func create_room(room_code: String, player_data: Dictionary, timeout: float = 90.0) -> void:
 	var url = "%s/rooms/%s.json" % [DB_URL, room_code]
 	var body = JSON.stringify({
 		"host_id": GlobalData.player_id,
 		"status": "waiting",
 		"created_at": Time.get_unix_time_from_system(),
+		"timeout": timeout,
 		"players": {
 			GlobalData.player_id: player_data
 		}
