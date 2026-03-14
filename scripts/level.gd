@@ -279,12 +279,6 @@ func _setup_single_player_zone() -> void:
 	shelter_area.add_child(col)
 	shelter_area.position = Vector2(500, -100) # Arbitrary, hopefully inside the level
 	
-	var visual = ColorRect.new()
-	visual.color = Color(0.2, 0.8, 0.2, 0.3)
-	visual.size = shape.size
-	visual.position = -shape.size / 2.0
-	shelter_area.add_child(visual)
-	
 	# Add a label to indicate shelter
 	var lbl = Label.new()
 	lbl.text = "SHELTER"
