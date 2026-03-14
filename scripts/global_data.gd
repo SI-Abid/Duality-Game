@@ -8,6 +8,8 @@ var player_id: String = ""        # Random UUID assigned on first launch
 # ── Room state ───────────────────────────────────────────────────────────────
 var room_code: String = ""
 var is_host: bool = false
+var is_single_player: bool = false
+var match_duration: float = 90.0
 
 # ── Other player snapshot (updated by FirebaseClient polling) ─────────────────
 var other_player: Dictionary = {}

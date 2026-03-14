@@ -38,13 +38,16 @@ func _ready() -> void:
 	_find_boxes()
 	_find_doors()
 	
-	# Game sync now happens via ENet RPCs
-	NetworkManager.peer_disconnected.connect(_handle_disconnect)
-	NetworkManager.server_disconnected.connect(_handle_disconnect)
-	
-	# We only poll for room cleanup (e.g. host deleting room)
-	FirebaseClient.room_updated.connect(_on_room_updated)
-	FirebaseClient.start_polling(GlobalData.room_code)
+	if GlobalData.is_single_player:
+		_setup_single_player_zone()
+	else:
+		# Game sync now happens via ENet RPCs
+		NetworkManager.peer_disconnected.connect(_handle_disconnect)
+		NetworkManager.server_disconnected.connect(_handle_disconnect)
+		
+		# We only poll for room cleanup (e.g. host deleting room)
+		FirebaseClient.room_updated.connect(_on_room_updated)
+		FirebaseClient.start_polling(GlobalData.room_code)
 
 func _find_boxes() -> void:
 	# Find all physics boxes in the level
@@ -128,21 +131,37 @@ func _spawn_players() -> void:
 	else:
 		push_error("[Level] No local player found in scene!")
 
-	# Spawn the remote player ghost
-	_remote_player = REMOTE_PLAYER_SCENE.instantiate()
-	add_child(_remote_player)
-	if GlobalData.is_host:
-		_remote_player.global_position = SPAWN2_POS
-	else:
-		_remote_player.global_position = SPAWN1_POS
+	if not GlobalData.is_single_player:
+		# Spawn the remote player ghost
+		_remote_player = REMOTE_PLAYER_SCENE.instantiate()
+		add_child(_remote_player)
+		if GlobalData.is_host:
+			_remote_player.global_position = SPAWN2_POS
+		else:
+			_remote_player.global_position = SPAWN1_POS
 
-	var other = GlobalData.other_player
-	var other_char = str(other.get("character", "Ninja Frog"))
-	var other_name = str(other.get("name", "Player 2"))
-	_remote_player.init(other_char, other_name)
+		var other = GlobalData.other_player
+		var other_char = str(other.get("character", "Ninja Frog"))
+		var other_name = str(other.get("name", "Player 2"))
+		_remote_player.init(other_char, other_name)
+
+var sp_time_left: float = 0.0
+var sp_game_over: bool = false
+var shelter_area: Area2D = null
 
 func _process(delta: float) -> void:
 	if _local_player == null or _disconnected:
+		return
+
+	if GlobalData.is_single_player and not sp_game_over:
+		sp_time_left -= delta
+		_disconnect_label.text = "Time Left: %d" % int(ceil(sp_time_left))
+		
+		if sp_time_left <= 0:
+			sp_time_left = 0
+			_end_single_player_game(false)
+		else:
+			_check_single_player_win()
 		return
 
 	_sync_timer += delta
@@ -249,3 +268,53 @@ func _notification(what: int) -> void:
 		NetworkManager.close_connection()
 		if GlobalData.is_host and GlobalData.room_code != "":
 			FirebaseClient.delete_room(GlobalData.room_code)
+
+func _setup_single_player_zone() -> void:
+	sp_time_left = GlobalData.match_duration
+	shelter_area = Area2D.new()
+	var col = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(250, 250)
+	col.shape = shape
+	shelter_area.add_child(col)
+	shelter_area.position = Vector2(500, -100) # Arbitrary, hopefully inside the level
+	
+	var visual = ColorRect.new()
+	visual.color = Color(0.2, 0.8, 0.2, 0.3)
+	visual.size = shape.size
+	visual.position = -shape.size / 2.0
+	shelter_area.add_child(visual)
+	
+	# Add a label to indicate shelter
+	var lbl = Label.new()
+	lbl.text = "SHELTER"
+	lbl.position = Vector2(-20, -50)
+	shelter_area.add_child(lbl)
+	
+	add_child(shelter_area)
+
+func _check_single_player_win() -> void:
+	if shelter_area == null or _boxes.size() == 0: return
+	
+	var safe_count = 0
+	for box in _boxes:
+		var overlapping = shelter_area.get_overlapping_bodies()
+		if box in overlapping:
+			safe_count += 1
+			
+	if safe_count == _boxes.size():
+		_end_single_player_game(true)
+
+func _end_single_player_game(won: bool) -> void:
+	if sp_game_over: return
+	sp_game_over = true
+	
+	if won:
+		_disconnect_label.text = "YOU WIN! All boxes secured."
+		_disconnect_label.add_theme_color_override("font_color", Color(0.3, 1, 0.3))
+	else:
+		_disconnect_label.text = "TIME'S UP! You lose."
+		_disconnect_label.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
+	
+	await get_tree().create_timer(3.0).timeout
+	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
