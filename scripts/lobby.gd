@@ -54,7 +54,7 @@ func _ready() -> void:
 	cancel_create_btn.pressed.connect(_on_cancel_create)
 	cancel_join_btn.pressed.connect(_on_cancel_join)
 	join_confirm_btn.pressed.connect(_on_join_confirm)
-	code_input.text_changed.connect(func(t): join_confirm_btn.disabled = t.strip_edges().length() < 4)
+	code_input.text_changed.connect(_on_code_input_changed)
 	join_confirm_btn.disabled = true
 	
 	# Single player connections
@@ -134,6 +134,10 @@ func _on_cancel_create() -> void:
 	_show_panel(Mode.MULTI_MENU)
 
 # ── JOIN ROOM ─────────────────────────────────────────────────────────────────
+
+
+func _on_code_input_changed(t: String) -> void:
+	join_confirm_btn.disabled = t.strip_edges().length() < 4
 
 func _on_join_pressed() -> void:
 	_show_panel(Mode.JOIN)
@@ -215,6 +219,16 @@ func _build_player_data() -> Dictionary:
 		"last_seen": Time.get_unix_time_from_system()
 	}
 
+
+func _sync_to_single(idx: int) -> void:
+	_timeout_select.selected = idx
+
+func _sync_to_multi(idx: int) -> void:
+	var sp_vbox = $Content/SinglePanel/VBox
+	var sp_select = sp_vbox.get_child(3)
+	if sp_select is OptionButton:
+		sp_select.selected = idx
+
 func _setup_timeout_select() -> void:
 	var vbox = $Content/CreatePanel/VBox
 	var label = Label.new()
@@ -245,5 +259,5 @@ func _setup_timeout_select() -> void:
 	sp_vbox.add_child(sp_select)
 	sp_vbox.move_child(sp_select, 3)
 	
-	sp_select.item_selected.connect(func(idx): _timeout_select.selected = idx)
-	_timeout_select.item_selected.connect(func(idx): sp_select.selected = idx)
+	sp_select.item_selected.connect(_sync_to_single)
+	_timeout_select.item_selected.connect(_sync_to_multi)
