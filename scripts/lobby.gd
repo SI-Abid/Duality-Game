@@ -151,28 +151,33 @@ func _on_join_confirm() -> void:
 	status_label.text = "Looking for room..."
 	join_confirm_btn.disabled = true
 
-	FirebaseClient.check_room(code, func(ok, data):
-		if not ok or data == null:
-			status_label.text = "Room not found. Check the code."
-			join_confirm_btn.disabled = false
-			return
-		if data.get("status", "") != "waiting":
-			status_label.text = "Room is already in progress."
-			join_confirm_btn.disabled = false
-			return
-		# Room exists — join it
-		GlobalData.room_code = code
-		GlobalData.is_host   = false
-		GlobalData.is_single_player = false
-		var player_data := _build_player_data()
-		status_label.text = "Joining room..."
-		FirebaseClient.join_room(code, player_data, func(ok2, _d):
-			if not ok2:
-				status_label.text = "Failed to join. Try again."
-				join_confirm_btn.disabled = false
-				return
-			FirebaseClient.start_polling(code)
-	))
+	FirebaseClient.check_room(code, _on_check_room_complete)
+
+func _on_check_room_complete(ok: bool, data: Variant) -> void:
+	if not ok or data == null:
+		status_label.text = "Room not found. Check the code."
+		join_confirm_btn.disabled = false
+		return
+	if data.get("status", "") != "waiting":
+		status_label.text = "Room is already in progress."
+		join_confirm_btn.disabled = false
+		return
+	# Room exists — join it
+	var code := code_input.text.strip_edges().to_upper()
+	GlobalData.room_code = code
+	GlobalData.is_host   = false
+	GlobalData.is_single_player = false
+	var player_data := _build_player_data()
+	status_label.text = "Joining room..."
+	FirebaseClient.join_room(code, player_data, _on_join_room_complete)
+
+func _on_join_room_complete(ok: bool, _data: Variant) -> void:
+	if not ok:
+		status_label.text = "Failed to join. Try again."
+		join_confirm_btn.disabled = false
+		return
+	var code := code_input.text.strip_edges().to_upper()
+	FirebaseClient.start_polling(code)
 
 func _on_cancel_join() -> void:
 	FirebaseClient.stop_polling()
