@@ -55,33 +55,72 @@ anchor_bottom = 1.0
 theme_override_constants/separation = 20
 
 [node name="Heading" type="Label" parent="Content/MenuPanel/VBox"]
-text = "Multiplayer"
+text = "Game Mode"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 modulate = Color(0.8, 0.8, 1.0, 1)
 
 [node name="Sub" type="Label" parent="Content/MenuPanel/VBox"]
+text = "How would you like to play?"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+modulate = Color(0.6, 0.6, 0.8, 1)
+
+[node name="SinglePlayerBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 60)
+text = "Single Player"
+theme_override_font_sizes/font_size = 20
+
+[node name="MultiplayerBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 60)
+text = "Multiplayer"
+theme_override_font_sizes/font_size = 20
+
+[node name="BackBtn" type="Button" parent="Content/MenuPanel/VBox"]
+custom_minimum_size = Vector2(360, 44)
+text = "< Back"
+theme_override_font_sizes/font_size = 16
+modulate = Color(0.7, 0.7, 0.7, 1)
+
+[node name="MultiMenuPanel" type="Control" parent="Content"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -140.0
+offset_right = 180.0
+offset_bottom = 140.0
+visible = false
+
+[node name="VBox" type="VBoxContainer" parent="Content/MultiMenuPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 20
+
+[node name="Heading" type="Label" parent="Content/MultiMenuPanel/VBox"]
+text = "Multiplayer"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+modulate = Color(0.8, 0.8, 1, 1)
+
+[node name="Sub" type="Label" parent="Content/MultiMenuPanel/VBox"]
 text = "Play with a friend over the internet"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 13
 modulate = Color(0.6, 0.6, 0.8, 1)
 
-[node name="SingleBtn" type="Button" parent="Content/MenuPanel/VBox"]
-custom_minimum_size = Vector2(360, 60)
-text = "Single Player"
-theme_override_font_sizes/font_size = 20
-
-[node name="CreateBtn" type="Button" parent="Content/MenuPanel/VBox"]
+[node name="CreateBtn" type="Button" parent="Content/MultiMenuPanel/VBox"]
 custom_minimum_size = Vector2(360, 60)
 text = "Create Room"
 theme_override_font_sizes/font_size = 20
 
-[node name="JoinBtn" type="Button" parent="Content/MenuPanel/VBox"]
+[node name="JoinBtn" type="Button" parent="Content/MultiMenuPanel/VBox"]
 custom_minimum_size = Vector2(360, 60)
 text = "Join Room"
 theme_override_font_sizes/font_size = 20
 
-[node name="BackBtn" type="Button" parent="Content/MenuPanel/VBox"]
+[node name="BackBtn" type="Button" parent="Content/MultiMenuPanel/VBox"]
 custom_minimum_size = Vector2(360, 44)
 text = "< Back"
 theme_override_font_sizes/font_size = 16
