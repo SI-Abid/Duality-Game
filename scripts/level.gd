@@ -99,7 +99,10 @@ func _setup_hud() -> void:
 	add_child(canvas)
 
 	_room_label = Label.new()
-	_room_label.text = "Room: " + GlobalData.room_code + " (P2P)"
+	if GlobalData.is_single_player:
+		_room_label.text = "Single Player Mode"
+	else:
+		_room_label.text = "Room: " + GlobalData.room_code + " (P2P)"
 	_room_label.position = Vector2(10, 10)
 	_room_label.add_theme_font_size_override("font_size", 14)
 	canvas.add_child(_room_label)
@@ -155,13 +158,16 @@ func _process(delta: float) -> void:
 
 	if GlobalData.is_single_player and not sp_game_over:
 		sp_time_left -= delta
-		_disconnect_label.text = "Time Left: %d" % int(ceil(sp_time_left))
-		
+
 		if sp_time_left <= 0:
 			sp_time_left = 0
+			_disconnect_label.text = "Time Left: 0"
 			_end_single_player_game(false)
 		else:
-			_check_single_player_win()
+			var safe_count = _get_boxes_in_shelter()
+			_disconnect_label.text = "Time: %d  |  Boxes: %d/%d" % [int(ceil(sp_time_left)), safe_count, _boxes.size()]
+			if safe_count == _boxes.size():
+				_end_single_player_game(true)
 		return
 
 	_sync_timer += delta
@@ -271,33 +277,40 @@ func _notification(what: int) -> void:
 
 func _setup_single_player_zone() -> void:
 	sp_time_left = GlobalData.match_duration
-	shelter_area = Area2D.new()
-	var col = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(250, 250)
-	col.shape = shape
-	shelter_area.add_child(col)
-	shelter_area.position = Vector2(500, -100) # Arbitrary, hopefully inside the level
-	
-	# Add a label to indicate shelter
+
+	# Reuse the existing Trigger Area2D already placed in the level scene
+	shelter_area = %Trigger
+
+	# Read the shape size from the existing CollisionShape2D
+	var col_shape = shelter_area.get_node("CollisionShape2D")
+	var shape_size := Vector2(194, 79)
+	if col_shape and col_shape.shape is RectangleShape2D:
+		shape_size = (col_shape.shape as RectangleShape2D).size
+
+	# Semi-transparent green overlay so players can see the zone
+	var rect = ColorRect.new()
+	rect.color = Color(0.2, 0.9, 0.2, 0.25)
+	rect.size = shape_size
+	rect.position = col_shape.position - shape_size / 2.0
+	shelter_area.add_child(rect)
+
 	var lbl = Label.new()
 	lbl.text = "SHELTER"
-	lbl.position = Vector2(-20, -50)
+	lbl.add_theme_font_size_override("font_size", 18)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.size = Vector2(120, 30)
+	lbl.position = col_shape.position + Vector2(-60, -shape_size.y / 2.0 - 28)
 	shelter_area.add_child(lbl)
-	
-	add_child(shelter_area)
 
-func _check_single_player_win() -> void:
-	if shelter_area == null or _boxes.size() == 0: return
-	
-	var safe_count = 0
+func _get_boxes_in_shelter() -> int:
+	if shelter_area == null or _boxes.size() == 0:
+		return 0
+	var overlapping = shelter_area.get_overlapping_bodies()
+	var count = 0
 	for box in _boxes:
-		var overlapping = shelter_area.get_overlapping_bodies()
 		if box in overlapping:
-			safe_count += 1
-			
-	if safe_count == _boxes.size():
-		_end_single_player_game(true)
+			count += 1
+	return count
 
 func _end_single_player_game(won: bool) -> void:
 	if sp_game_over: return
@@ -311,4 +324,6 @@ func _end_single_player_game(won: bool) -> void:
 		_disconnect_label.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
 	
 	await get_tree().create_timer(3.0).timeout
+	GlobalData.is_single_player = false
+	GlobalData.is_host = false
 	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
