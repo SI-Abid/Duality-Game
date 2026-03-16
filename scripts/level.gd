@@ -1,6 +1,6 @@
 extends Node2D
 ## Level - multiplayer version.
-## Uses the Player node already placed in level.tscn as the local player.
+## Uses the Player node already placed in practice.tscn as the local player.
 ## Spawns a RemotePlayer (Node2D ghost) for the other player via Firebase.
 
 const REMOTE_PLAYER_SCENE = preload("res://scenes/remote_player.tscn")
@@ -121,7 +121,7 @@ func _setup_hud() -> void:
 	canvas.add_child(_disconnect_label)
 
 func _spawn_players() -> void:
-	# Find the existing Player node placed in level.tscn
+	# Find the existing Player node placed in practice.tscn
 	_local_player = get_node_or_null("Player")
 	if _local_player == null:
 		_local_player = find_child("Player")

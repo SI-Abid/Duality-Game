@@ -22,6 +22,7 @@ func _ready() -> void:
 	FirebaseClient.room_updated.connect(_on_room_updated)
 	FirebaseClient.start_polling(GlobalData.room_code)
 	
+	FirebaseClient.room_not_found.connect(_on_room_not_found)
 	NetworkManager.peer_connected.connect(_on_peer_connected)
 	NetworkManager.connection_succeeded.connect(_on_connection_succeeded)
 
@@ -82,7 +83,13 @@ func _on_room_updated(data: Dictionary) -> void:
 	# 4. Success — Host clicked start
 	if status == "playing":
 		FirebaseClient.stop_polling()
-		get_tree().change_scene_to_file("res://scenes/level.tscn")
+		get_tree().change_scene_to_file("res://scenes/arena.tscn")
+
+func _on_room_not_found(_code: String) -> void:
+	FirebaseClient.stop_polling()
+	status_label.text = "Room no longer exists. Returning to lobby..."
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/lobby.tscn")
 
 func _on_start_pressed() -> void:
 	start_btn.disabled = true

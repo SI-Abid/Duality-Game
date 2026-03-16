@@ -64,6 +64,7 @@ func _ready() -> void:
 	_setup_timeout_select()
 
 	FirebaseClient.room_updated.connect(_on_room_updated)
+	FirebaseClient.room_not_found.connect(_on_room_not_found)
 
 func _show_panel(mode: Mode) -> void:
 	_mode = mode
@@ -99,7 +100,7 @@ func _on_start_single() -> void:
 		timeout = _timeout_select.get_item_metadata(_timeout_select.selected)
 	GlobalData.match_duration = timeout
 	
-	get_tree().change_scene_to_file("res://scenes/level.tscn")
+	get_tree().change_scene_to_file("res://scenes/practice.tscn")
 
 # ── CREATE ROOM ───────────────────────────────────────────────────────────────
 
@@ -114,16 +115,19 @@ func _on_create_pressed() -> void:
 	waiting_label.text   = "Waiting for another player..."
 	_show_panel(Mode.CREATE)
 	status_label.text = "Creating room..."
-	
+
 	var timeout = 90.0
 	if _timeout_select:
 		timeout = _timeout_select.get_item_metadata(_timeout_select.selected)
 	GlobalData.match_duration = timeout
 
-	FirebaseClient.create_room(code, player_data, timeout)
-	await get_tree().create_timer(0.5).timeout
-	FirebaseClient.start_polling(code)
-	status_label.text = "Share your room code!"
+	FirebaseClient.create_room(code, player_data, timeout, func(ok: bool):
+		if not ok:
+			status_label.text = "Failed to create room. Check your connection."
+			_show_panel(Mode.MULTI_MENU)
+			return
+		status_label.text = "Share your room code!"
+		FirebaseClient.start_polling(code))
 
 func _on_cancel_create() -> void:
 	FirebaseClient.stop_polling()
@@ -204,7 +208,13 @@ func _on_room_updated(data: Dictionary) -> void:
 
 	if status == "playing":
 		FirebaseClient.stop_polling()
-		get_tree().change_scene_to_file("res://scenes/level.tscn")
+		get_tree().change_scene_to_file("res://scenes/arena.tscn")
+
+func _on_room_not_found(_code: String) -> void:
+	if _mode == Mode.CREATE:
+		FirebaseClient.stop_polling()
+		status_label.text = "Room lost. Please try again."
+		_show_panel(Mode.MULTI_MENU)
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

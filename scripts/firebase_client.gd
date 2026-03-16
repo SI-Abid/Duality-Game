@@ -4,6 +4,7 @@ extends Node
 ## and one dedicated to polling (reads), so they never block each other.
 
 signal room_updated(data: Dictionary)
+signal room_not_found(room_code: String)
 signal request_failed(code: int, error: String)
 
 var DB_URL: String = ""  # Loaded from config.cfg (not committed to version control)
@@ -56,11 +57,11 @@ func _load_config() -> void:
 func generate_room_code() -> String:
 	var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 	var code = ""
-	for i in 6:
+	for i in 4:
 		code += chars[randi() % chars.length()]
 	return code
 
-func create_room(room_code: String, player_data: Dictionary, timeout: float = 90.0) -> void:
+func create_room(room_code: String, player_data: Dictionary, timeout: float = 90.0, on_created: Callable = Callable()) -> void:
 	var url = "%s/rooms/%s.json" % [DB_URL, room_code]
 	var body = JSON.stringify({
 		"host_id": GlobalData.player_id,
@@ -74,8 +75,10 @@ func create_room(room_code: String, player_data: Dictionary, timeout: float = 90
 	_enqueue("PUT", url, body, func(ok, _data):
 		if ok:
 			print("[Firebase] Room created: ", room_code)
+			if on_created.is_valid(): on_created.call(true)
 		else:
-			emit_signal("request_failed", -1, "Failed to create room"))
+			emit_signal("request_failed", -1, "Failed to create room")
+			if on_created.is_valid(): on_created.call(false))
 
 func join_room(room_code: String, player_data: Dictionary, callback: Callable) -> void:
 	var url = "%s/rooms/%s/players/%s.json" % [DB_URL, room_code, GlobalData.player_id]
@@ -134,6 +137,17 @@ func _enqueue(method: String, url: String, body: String, callback: Callable) -> 
 func _flush() -> void:
 	if _queue_busy or _pending.is_empty():
 		return
+
+	if DB_URL.is_empty():
+		push_error("[Firebase] DB_URL is empty — did you create config.cfg from config.cfg.example?")
+		# Drain queue, calling each callback with ok=false
+		while not _pending.is_empty():
+			var req = _pending[0]
+			_pending.remove_at(0)
+			if req["callback"].is_valid():
+				req["callback"].call(false, null)
+		return
+
 	_queue_busy = true
 	var req = _pending[0]
 	_pending.remove_at(0)
@@ -147,10 +161,17 @@ func _flush() -> void:
 	var headers: PackedStringArray = ["Content-Type: application/json"]
 	var body_str = str(req.get("body", ""))
 	_current_callback = req["callback"]
+	var err: int
 	if body_str.is_empty():
-		_http_queue.request(req["url"], headers, http_method)
+		err = _http_queue.request(req["url"], headers, http_method)
 	else:
-		_http_queue.request(req["url"], headers, http_method, body_str)
+		err = _http_queue.request(req["url"], headers, http_method, body_str)
+	if err != OK:
+		push_error("[Firebase] HTTPRequest.request() failed with error: %d (url: %s)" % [err, req["url"]])
+		_queue_busy = false
+		if _current_callback.is_valid():
+			_current_callback.call(false, null)
+		_flush()
 
 func _on_queue_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	_queue_busy = false
@@ -181,7 +202,10 @@ func _on_poll_completed(result: int, response_code: int, _headers: PackedStringA
 	_poll_busy = false
 	var text = body.get_string_from_utf8()
 	var ok = (result == HTTPRequest.RESULT_SUCCESS and response_code >= 200 and response_code < 300)
-	if ok and not text.is_empty() and text != "null":
-		var parsed = JSON.parse_string(text)
-		if parsed is Dictionary:
-			emit_signal("room_updated", parsed)
+	if ok:
+		if text == "null" or text.is_empty():
+			emit_signal("room_not_found", _poll_room_code)
+		else:
+			var parsed = JSON.parse_string(text)
+			if parsed is Dictionary:
+				emit_signal("room_updated", parsed)
