@@ -7,6 +7,7 @@
 *.idsig
 *.pck
 *.x86_64
+*.zip
 releases/
 
 # Security — keystores and secrets
@@ -17,3 +18,9 @@ config.cfg
 
 # Editor local files
 .vscode/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
