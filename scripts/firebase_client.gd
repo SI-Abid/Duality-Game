@@ -116,6 +116,8 @@ func delete_room(room_code: String) -> void:
 		print("[Firebase] Room deleted"))
 
 func start_polling(room_code: String) -> void:
+	if _polling and _poll_room_code == room_code:
+		return  # Already polling this room
 	_poll_room_code = room_code
 	_polling = true
 	_poll_timer.start()

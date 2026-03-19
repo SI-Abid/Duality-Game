@@ -7,7 +7,7 @@ const REMOTE_PLAYER_SCENE = preload("res://scenes/remote_player.tscn")
 
 const SPAWN1_POS = Vector2(0, 0)
 const SPAWN2_POS = Vector2(-50, 0)
-const SYNC_INTERVAL = 0.1
+const SYNC_INTERVAL = 0.033  # ~30 Hz, matches level.gd
 const STALE_POLLS_THRESHOLD = 20
 
 # ── Zone geometry (matches the two CollisionShape2D positions in arena.tscn) ──

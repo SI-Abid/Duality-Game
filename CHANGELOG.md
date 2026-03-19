@@ -4,6 +4,26 @@ All notable changes to Duality are documented here.
 
 ---
 
+## [v1.2.0] - 2026-03-19
+
+### Added
+- **Internet multiplayer** — players can now connect from different networks worldwide, not just the same LAN
+  - Replaced ENet P2P with WebRTC (via `godot-webrtc-native` GDExtension v1.1.0)
+  - Firebase Realtime Database repurposed as WebRTC signaling channel (SDP offer/answer + ICE candidates)
+  - STUN support via Google's public servers for NAT traversal (works for most home routers)
+  - Optional TURN relay server support via `config.cfg [turn]` section for users behind strict NAT
+- **WebRTC GDExtension** — bundled `addons/webrtc/` for Linux, Windows, macOS, Android, and iOS
+
+### Fixed
+- Duplicate Firebase polling — `start_polling` now no-ops if already polling the same room
+- ICE candidates now applied after SDP remote description is set (correct WebRTC handshake order)
+
+### Changed
+- Arena sync rate increased from 10 Hz to 30 Hz — boxes and player movement are significantly smoother
+- TURN server URL field supports comma-separated values for multi-port fallback (port 80 + 443)
+
+---
+
 ## [v1.1.0] - 2026-03-16
 
 ### Added

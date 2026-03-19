@@ -5,6 +5,17 @@
 [firebase]
 db_url = "https://YOUR-PROJECT-default-rtdb.YOUR-REGION.firebasedatabase.app"
 
+[turn]
+; Optional: TURN relay server for players behind symmetric NAT (e.g. mobile hotspots, strict firewalls).
+; Without TURN, STUN alone works for most home routers (~80% of cases).
+; Free tier available at https://www.metered.ca/tools/openrelay/
+; Leave url empty to disable TURN and use STUN only.
+; Comma-separated for multi-port fallback (port 443 works through strict firewalls)
+url = ""
+; Example: url = "turn:yourapp.metered.live:80,turn:yourapp.metered.live:443"
+username = ""
+credential = ""
+
 [android]
 ; Place your keystore at ~/my-release-key.keystore (outside the project).
 ; In Godot Editor → Export → Android → Keystore section, point to that path.
